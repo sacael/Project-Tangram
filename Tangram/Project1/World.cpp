@@ -14,6 +14,7 @@ void World::InitLevel()
 	pause = false;
 	objects.clear();
 	targetObjects.clear();
+	UI.clear();
 	switch (currentLevel) {
 		case 0: {
 			GLfloat objectVertices[] = { 50, 50, 0,
@@ -97,7 +98,7 @@ void World::verificationVictory()
 	vict /= (size);
 	if (vict > 0.999f) {
 		pause = true;
-		UI.push_back(new NextLevel(500, 600, 500, 600, this));
+		UI.push_back(new NextLevel(500, 650, 500, 600, this));
 	}
 	
 }

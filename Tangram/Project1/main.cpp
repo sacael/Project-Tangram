@@ -27,7 +27,8 @@ int leftButton = 0;
 int middleButton = 0;
 int rightButton = 0;
 int downX, downY;
-
+std::string tuto[3] = {"rotate : q,e","translate : mouse","shear : o,l"};
+int nbtuto = 3;
 bool pressedleft = false;
 
 void mouse(int button, int state, int x, int y);
@@ -38,7 +39,7 @@ void draw_axis(bool drawPoints, float scale);
 
 void computeCollision();
 void callback_idle(void);
-
+void renderInstructions();
 void renderObjects();
 
 World world;
@@ -57,6 +58,7 @@ void display(void)
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
 	renderObjects();
+	renderInstructions();
 	glFlush();
 }
 
@@ -146,7 +148,7 @@ void motion(int x, int y)
 void keyboard(unsigned char key, int x, int y)
 {
 
-    switch (key) {
+   switch (key) {
 		
         case 27:
             exit(0);
@@ -215,7 +217,18 @@ int main(int argc, char** argv)
     return 0;
     
 }
+void renderInstructions(){
+	for (int i = 0; i < nbtuto; i++) {
+		glColor3d(0, 1.0f, 0.0f);
+		glRasterPos2f(15,15+i*20);
+		int len = tuto[i].length();
+		for (int j = 0; j < len; j++) {
+			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, tuto[i][j]);
+		}
+	}
 
+
+}
 void renderObjects()
 {
     GLfloat r,g,b;
@@ -225,7 +238,7 @@ void renderObjects()
     b=0.0f;
     
     glBegin(GL_TRIANGLES);
-	glColor3f(1.0, 0.0, 0.0);
+	glColor3f(1.0, 1.0, 1.0);
 	for (GLobject obj : world.targetObjects) {
 		Point4** points = obj.getPoints();
 		for (int i = 0; i<(obj.triangles.size()) * 3; i++) {
@@ -249,8 +262,18 @@ void renderObjects()
 		}
 		delete[] points;
 	}
-
-     glEnd();
+	glEnd();
+	for (Button* obj : world.UI) {
+		if (obj->Text.length() > 0) {
+			glColor3d(0, 1.0f, 0.0f);
+			glRasterPos2f(obj->minX + 5,(obj->maxY + obj->minY)/2+12);
+			int len = obj->Text.length();
+			for (int i = 0; i < len; i++) {
+				glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, obj->Text[i]);
+			}
+		}
+	}
+	
 
     
 }

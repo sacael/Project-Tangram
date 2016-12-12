@@ -17,6 +17,7 @@ public:
 	GLfloat maxY;
 	GLfloat minY;
 	World* world;
+	std::string Text = "";
 	virtual void actionOnClick() =0;
 	Button(int, int, int, int, World*);
 	~Button();
