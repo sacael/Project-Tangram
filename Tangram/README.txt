@@ -1,0 +1,1 @@
+il faut rajouter glut32.lib dans les libs
