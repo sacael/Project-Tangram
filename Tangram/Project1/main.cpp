@@ -12,7 +12,7 @@
 #include <GL/GL.h>
 #include <GL/GLU.h>
 #include <math.h>  
-#include <GL/glut.h>
+#include "GL/glut.h" 
 #include "Point4.h"
 #include "GLobject.h"
 #include <vector>
