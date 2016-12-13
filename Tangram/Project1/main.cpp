@@ -28,7 +28,8 @@ int middleButton = 0;
 int rightButton = 0;
 int leftButtonUp = 0;
 int downX, downY;
-std::string tuto[3] = {"rotate : q,e","translate : mouse","shear : o,l"};
+std::string tuto[3] 
+	= {"Rotation: Q, E", "Translation: Mouse", "Shearing: O, L"};
 int nbtuto = 3;
 bool pressedleft = false;
 
@@ -40,8 +41,10 @@ void draw_axis(bool drawPoints, float scale);
 
 void computeCollision();
 void callback_idle(void);
+void renderBackground();
 void renderInstructions();
 void renderObjects();
+GLuint loadBMP_custom(const char * imagepath);
 
 World world;
 void init(void)
@@ -58,6 +61,7 @@ void display(void)
 	glClearColor(0.0, 0.0, 0.0, 1.0);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glLoadIdentity();
+	renderBackground();
 	renderObjects();
 	renderInstructions();
 	glFlush();
@@ -220,11 +224,12 @@ int main(int argc, char** argv)
     return 0;
     
 }
-void renderInstructions(){
+void renderInstructions() {
 	for (int i = 0; i < nbtuto; i++) {
 		glColor3d(0, 1.0f, 0.0f);
-		glRasterPos2f(15,15+i*20);
+		glRasterPos2f(15, 15+i*20);
 		int len = tuto[i].length();
+
 		for (int j = 0; j < len; j++) {
 			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, tuto[i][j]);
 		}
@@ -281,9 +286,144 @@ void renderObjects()
     
 }
 
-
-
 void callback_idle(void)
 {
     glutPostRedisplay();    
+}
+
+void renderBackground() {
+	int textureSize = 256;
+
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glOrtho(0.0, glutGet(GLUT_WINDOW_WIDTH), 0.0, glutGet(GLUT_WINDOW_HEIGHT), -1.0, 1.0);
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+
+	glLoadIdentity();
+	glDisable(GL_LIGHTING);
+
+	glColor3f(1, 1, 1);
+	glEnable(GL_TEXTURE_2D);
+	GLuint texture = loadBMP_custom("texture.bmp");
+
+	GLint viewPort[4];
+
+	glGetIntegerv(GL_VIEWPORT, viewPort);
+
+	float tmpMaxX = viewPort[2] / textureSize;
+	float tmpMaxY = viewPort[3] / textureSize;
+	int maxX = ceil(tmpMaxX) * textureSize;
+	int maxY = ceil(tmpMaxY) * textureSize;
+
+	// Draw a textured quad
+	glBegin(GL_QUADS);
+
+	for (int i = 0; i <= maxX; i = i + textureSize) {
+		for (int j = 0; j <= maxY; j = j + textureSize) {
+			glTexCoord2f(0, 0); glVertex3f(0+i , 0+j, 0);
+			glTexCoord2f(0, 1); glVertex3f(0+i, textureSize+j, 0);
+			glTexCoord2f(1, 1); glVertex3f(textureSize+i, textureSize+j, 0);
+			glTexCoord2f(1, 0); glVertex3f(textureSize+i, 0+j, 0);
+		}
+	}
+
+	glEnd();
+
+
+	glDisable(GL_TEXTURE_2D);
+	glPopMatrix();
+
+
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+
+	glMatrixMode(GL_MODELVIEW);
+
+}
+
+GLuint loadBMP_custom(const char * imagepath) {
+
+	printf("Reading image %s\n", imagepath);
+
+	// Data read from the header of the BMP file
+	unsigned char header[54];
+	unsigned int dataPos;
+	unsigned int imageSize;
+	unsigned int width, height, bpp;
+	// Actual RGB data
+	unsigned char * data;
+
+	// Open the file
+	FILE * file = fopen(imagepath, "rb");
+	if (!file) { printf("Image could not be opened\n"); return 0; }
+
+	// Read the header, i.e. the 54 first bytes
+
+	// If less than 54 byes are read, problem
+	if (fread(header, 1, 54, file) != 54) {
+		printf("Not a correct BMP file\n");
+		return false;
+	}
+	// A BMP files always begins with "BM"
+	if (header[0] != 'B' || header[1] != 'M') {
+		printf("Not a correct BMP file\n");
+		return 0;
+	}
+	// Make sure this is a 24bpp file
+	if (*(int*)&(header[0x1E]) != 0) { printf("Not a correct BMP file\n");    return 0; }
+	if (*(int*)&(header[0x1C]) != 24) { printf("Not a correct BMP file\n");    return 0; }
+
+	// Read the information about the image
+	dataPos = *(int*)&(header[0x0A]);
+	imageSize = *(int*)&(header[0x22]);
+	width = *(int*)&(header[0x12]);
+	height = *(int*)&(header[0x16]);
+	bpp = 3;
+
+	// Some BMP files are misformatted, guess missing information
+	if (imageSize == 0)    imageSize = width*height * 3; // 3 : one byte for each Red, Green and Blue component
+	if (dataPos == 0)      dataPos = 54;
+
+	// Create a buffer
+	data = new unsigned char[imageSize];
+
+	// Read the actual data from the file into the buffer
+	fread(data, 1, imageSize, file);
+
+	// Everything is in memory now, the file wan be closed
+	fclose(file);
+
+	// Swap Red and Blue component for each texel of the image
+	unsigned char t;
+	for (unsigned int i = 0; i < imageSize; i += 3)
+	{
+		t = data[i];
+		data[i] = data[i + 2];
+		data[i + 2] = t;
+	}
+
+	// Create one OpenGL texture
+	GLuint textureID;
+	glGenTextures(1, &textureID);
+
+	// "Bind" the newly created texture : all future texture functions will modify this texture
+	glBindTexture(GL_TEXTURE_2D, textureID);
+
+	// Give the image to OpenGL
+	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, (bpp == 3 ? GL_RGB : GL_RGBA), GL_UNSIGNED_BYTE, data);
+
+	// Poor filtering, or ...
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
+
+	// ... nice trilinear filtering.
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+	// Return the ID of the texture we just created
+	return textureID;
 }
