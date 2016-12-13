@@ -83,7 +83,7 @@ void World::verificationVictory()
 
 	}
 	vict /= (size);
-	if (vict > 0.999f) {
+	if (vict > 0.97f) {
 		pause = true;
 		UI.push_back(new NextLevel(500, 650, 500, 600, this));
 	}
