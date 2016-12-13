@@ -42,6 +42,7 @@ public:
 	bool pause = false;
 	void InitLevel();
 	void verificationVictory();
+	void redrawNextLevelButton();
 private:
 	GLfloat * multVectMat(Point4 vect, GLfloat * mat);
 	void loadLevel(int levelIndex);
@@ -49,6 +50,8 @@ private:
 	void initTransfoMatrix(void);
 	void initTempMatrix(void);
 	void multiplyTransfoMatrice(GLfloat * mat);
+	void drawNextLevelButton();
+	NextLevel* nextLevelButton = nullptr;
 	GLfloat tranfoMatrice[16] = { 1.0f,0.0f,0.0f,0.0f,
 		0.0f,1.0f,0.0f,0.0f,
 		0.0f,0.0f,1.0f,0.0f,

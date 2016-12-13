@@ -19,6 +19,10 @@
 #include "World.h"
 
 
+const int WIDTH = 1400;
+const int HEIGHT = 1000;
+const float ASPECT = float(WIDTH) / HEIGHT;
+
 int sizeX = 1400;
 int sizeY = 1000;
 float step = 0.1f;
@@ -71,12 +75,19 @@ void display(void)
 void reshape (int width, int height)
 {
 
-	glViewport(0, 0, width, height);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	glOrtho(0.0, sizeX, sizeY, 0, -1.0, 1.0);
+
+	int w = height * ASPECT;           // w is width adjusted for aspect ratio
+	int left = (width - w) / 2;
+	glViewport(0, 0, w, height);       // fix up the viewport to maintain aspect ratio
+	gluOrtho2D(0, WIDTH, HEIGHT, 0);   // only the window is changing, not the camera
 	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+
+	glutPostRedisplay();
+
+
+	world.redrawNextLevelButton();
 }
 
 //fonction permettant de zoomer et de tourner avec la souris
@@ -263,7 +274,7 @@ void renderObjects()
 		}
 		delete[] points;
 	}
-	glColor3f(1.0, 0, 1.0);
+	glColor3f(0.5, .5, 1.0);
 	for (Button* obj : world.UI) {
 		Point4** points = obj->getPoints();
 		for (int i = 0; i<6; i++) {
@@ -274,17 +285,14 @@ void renderObjects()
 	glEnd();
 	for (Button* obj : world.UI) {
 		if (obj->Text.length() > 0) {
-			glColor3d(0, 1.0f, 0.0f);
+			glColor3d(1.0f, 1.0f, 1.0f);
 			glRasterPos2f(obj->minX + 5,(obj->maxY + obj->minY)/2+12);
 			int len = obj->Text.length();
 			for (int i = 0; i < len; i++) {
-				glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, obj->Text[i]);
+				glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, obj->Text[i]);
 			}
 		}
-	}
-	
-
-    
+	}    
 }
 
 void callback_idle(void)
@@ -293,7 +301,7 @@ void callback_idle(void)
 }
 
 void renderBackground() {
-	int textureSize = 256;
+	int realTextureSize = 256;
 
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
@@ -310,23 +318,35 @@ void renderBackground() {
 	glEnable(GL_TEXTURE_2D);
 
 	GLint viewPort[4];
-
 	glGetIntegerv(GL_VIEWPORT, viewPort);
 
-	float tmpMaxX = viewPort[2] / textureSize;
-	float tmpMaxY = viewPort[3] / textureSize;
-	int maxX = ceil(tmpMaxX) * textureSize;
-	int maxY = ceil(tmpMaxY) * textureSize;
+	int currentWidth = glutGet(GLUT_WINDOW_WIDTH);
+	int currentHeight = glutGet(GLUT_WINDOW_HEIGHT);
+	int textureSizeX = realTextureSize*currentWidth / WIDTH;
+	int textureSizeY = realTextureSize*currentHeight/ HEIGHT;
+
+	if (textureSizeX == 0) {
+		textureSizeX = 1;
+	}
+
+	if (textureSizeY == 0) {
+		textureSizeY = 1;
+	}
+
+	float tmpMaxX = currentWidth / textureSizeX;
+	float tmpMaxY = currentHeight / textureSizeY;
+	int maxX = ceil(tmpMaxX) * textureSizeX;
+	int maxY = ceil(tmpMaxY) * textureSizeY;
 
 	// Draw a textured quad
 	glBegin(GL_QUADS);
 
-	for (int i = 0; i <= maxX; i = i + textureSize) {
-		for (int j = 0; j <= maxY; j = j + textureSize) {
+	for (int i = 0; i <= maxX; i = i + textureSizeX) {
+		for (int j = 0; j <= maxY; j = j + textureSizeY) {
 			glTexCoord2f(0, 0); glVertex3f(0+i , 0+j, 0);
-			glTexCoord2f(0, 1); glVertex3f(0+i, textureSize+j, 0);
-			glTexCoord2f(1, 1); glVertex3f(textureSize+i, textureSize+j, 0);
-			glTexCoord2f(1, 0); glVertex3f(textureSize+i, 0+j, 0);
+			glTexCoord2f(0, 1); glVertex3f(0+i, textureSizeY+j, 0);
+			glTexCoord2f(1, 1); glVertex3f(textureSizeX +i, textureSizeY+j, 0);
+			glTexCoord2f(1, 0); glVertex3f(textureSizeX +i, 0+j, 0);
 		}
 	}
 

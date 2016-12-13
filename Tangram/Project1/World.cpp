@@ -84,12 +84,28 @@ void World::verificationVictory()
 	}
 	vict /= (size);
 	if (vict > 0.97f) {
-		pause = true;
-		UI.clear();
-		UI.push_back(new NextLevel(500, 650, 500, 600, this));
+		this->drawNextLevelButton();
 	}
 	
 }
+
+void World::drawNextLevelButton() {
+	pause = true;
+	UI.clear();
+	this->nextLevelButton = new NextLevel(500, 650, 500, 550, this);
+	UI.push_back(this->nextLevelButton);
+}
+
+void World::redrawNextLevelButton() {
+	if (this->nextLevelButton == nullptr) return;
+
+	pause = true;
+	UI.clear();
+	this->nextLevelButton = new NextLevel(500, 650, 500, 550, this);
+	UI.push_back(this->nextLevelButton);
+	
+}
+
 GLfloat* World::multVectMat(Point4 vect, GLfloat *mat)
 {
 	GLfloat * res = new GLfloat[4]; //{0.0f,0.0f,0.0f,1.0f};
