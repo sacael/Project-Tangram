@@ -52,7 +52,8 @@ void World::InitLevel()
 	pause = false;
 	objects.clear();
 	targetObjects.clear();
-	UI.clear();
+	UI.clear();	
+	this->nextLevelButton = nullptr;
 	loadLevel(currentLevel + 1);
 	std::cout << "Done" << std::endl;
 }
