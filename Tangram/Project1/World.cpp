@@ -189,7 +189,7 @@ void World::initTempMatrix(void)
 
 	tempMatrice[0] = tempMatrice[5] = tempMatrice[10] = tempMatrice[15] = 1.0f;
 }
-void World::rotate(float angle) {
+void World::rotate(float angle,AXIS axe) {
 	Point4 Position = Point4();
 	if (currentObject < objects.size()) {
 		Position = objects[currentObject].center;
@@ -212,40 +212,46 @@ void World::rotate(float angle) {
 		computeTransformation();
 	}
 }
-void World::translate(GLfloat x, GLfloat y) {
+void World::translate(GLfloat x, GLfloat y,GLfloat z) {
 	initTransfoMatrix();
 	tranfoMatrice[12] = x;
 	tranfoMatrice[13] = y;
+	tranfoMatrice[14] = z;
 	computeTransformation();
 }
-void World::shearing(GLfloat x, GLfloat y) {
+void World::shearing(GLfloat x, GLfloat y, GLfloat z) {
 	Point4 Position = Point4();
 	if (currentObject < objects.size()) {
 		Position = objects[currentObject].center;
 		initTransfoMatrix();
 		tranfoMatrice[12] = -Position.X;
 		tranfoMatrice[13] = -Position.Y;
+		tranfoMatrice[14] = -Position.Z;
 		initTempMatrix();
 		tempMatrice[1] = x;
 		tempMatrice[4] = y;
+		tempMatrice[9] = z;
 		multiplyTransfoMatrice(tempMatrice);
 		initTempMatrix();
 		tempMatrice[12] = Position.X;
 		tempMatrice[13] = Position.Y;
+		tempMatrice[14] = Position.Z;
 		multiplyTransfoMatrice(tempMatrice);
 		computeTransformation();
 	}
 }
-void World::scale(GLfloat x, GLfloat y) {
+void World::scale(GLfloat x, GLfloat y, GLfloat z) {
 	Point4 Position = Point4();
 	if (currentObject < objects.size()) {
 		Position = objects[currentObject].center;
 		initTransfoMatrix();
 		tranfoMatrice[12] = -Position.X;
 		tranfoMatrice[13] = -Position.Y;
+		tranfoMatrice[14] = -Position.Z;
 		initTempMatrix();
 		tempMatrice[0] = x;
 		tempMatrice[5] = y;
+		tempMatrice[10] = y;
 		multiplyTransfoMatrice(tempMatrice);
 		initTempMatrix();
 		tempMatrice[12] = Position.X;

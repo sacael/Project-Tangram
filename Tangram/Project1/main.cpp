@@ -187,11 +187,11 @@ void keyboard(unsigned char key, int x, int y)
 			world.translate(0, -step);
             break;
 		case 'q':
-			world.rotate(angle);
+			world.rotate(angle,AXIS::Z);
 			break;
 		case 'e':
 			
-			world.rotate(-angle);
+			world.rotate(-angle,AXIS::Z);
 			break;
 
         case 'o': 

@@ -17,7 +17,7 @@
 
 #define PI 3.14159265
 #define LEVELS_PATH "../Levels/Level" //The path to the levels with their identifier
-
+typedef enum AXIS { X, Y, Z };
 class NextLevel;
 class Button;
 class World
@@ -25,15 +25,16 @@ class World
 public:
 	World();
 	~World();
+
 	std::vector<GLobject> objects = std::vector<GLobject>();
 	std::vector<GLobject> targetObjects = std::vector<GLobject>();
 	std::vector<Button*> UI = std::vector<Button*>();
 	int currentObject = 0;
 	GLfloat step = 0.1f;
-	void rotate(float angle);
-	void translate(GLfloat x, GLfloat y);
-	void shearing(GLfloat x, GLfloat y);
-	void scale(GLfloat x, GLfloat y);
+	void rotate(float angle,AXIS axis);
+	void translate(GLfloat x, GLfloat y, GLfloat z=0);
+	void shearing(GLfloat x, GLfloat y, GLfloat z=0);
+	void scale(GLfloat x, GLfloat y, GLfloat z=1);
 	float maxX = 900;
 	float maxY = 900;
 	float minX = 0;
