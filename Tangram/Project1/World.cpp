@@ -1,6 +1,7 @@
 #include "World.h"
 
 #include "NextLevel.h"
+
 World::World()
 {
 }
@@ -9,75 +10,61 @@ World::World()
 World::~World()
 {
 }
+
+// Loads the folder Level located in ../Levels/ ending by levelIndex
+void World::loadLevel(int levelIndex) {
+	// Concate index with the level's path
+	std::stringstream sstm;
+	sstm << LEVELS_PATH << levelIndex << "/";
+	std::string ans = sstm.str();
+	char * concatenatedIndex = (char *)ans.c_str();
+	std::cout << "Loading level : " << levelIndex << std::endl;
+	// Loop through this directory
+	DIR *pDIR;
+	struct dirent *entry;
+	if (pDIR = opendir(concatenatedIndex)) {
+		// Foreach file, check if it is part of the target or not
+		while (entry = readdir(pDIR)) {
+			// Avoid looping on . and .. files
+			if (strcmp(entry->d_name, ".") != 0 && strcmp(entry->d_name, "..") != 0) {
+				//Concat path and index to make the fullpath
+				std::string buf(concatenatedIndex);
+				buf.append(entry->d_name);
+				// It is not the target, add it to objects
+				if (strcmp(entry->d_name, "target.obj") != 0) {
+					std::cout << buf.c_str() << std::endl;
+					objects.push_back(*OBJReader::ReadOBJ(buf.c_str()));
+				}
+				// It is the target, add it to target objects
+				else if (strcmp(entry->d_name, "target.obj") == 0) {
+					std::cout << buf.c_str() << std::endl;
+					targetObjects.push_back(*OBJReader::ReadOBJ(buf.c_str()));
+				}
+			}
+		}
+		closedir(pDIR);
+	}
+}
+
+// Calls the load of current level's objects
 void World::InitLevel()
 {
 	pause = false;
 	objects.clear();
 	targetObjects.clear();
 	UI.clear();
-	switch (currentLevel) {
-		case 0: {
-			GLfloat objectVertices[] = { 50, 50, 0,
-				50, 150, 0,
-				150,50, 0,
-				50, 150, 0,
-				150,50, 0,
-				150, 150, -0 };
-			objects.push_back(GLobject(objectVertices, 18));
-			GLfloat objectVertices2[] = { 50, 50, 0,
-				50, 150, 0,
-				150,50, 0, };
-			objects.push_back(GLobject(objectVertices2, 9));
-			GLfloat objectVerticesT[] = { 200, 200, 0,
-				200, 300, 0,
-				300,200, 0,
-				200, 300, 0,
-				300, 200, 0,
-				300,300, 0,
-				300, 200, 0,
-				300, 300, 0,
-				400,300, 0 };
-			targetObjects.push_back(GLobject(objectVerticesT, 27));
-			break;
-		}
-		case 1: {
-			GLfloat objectVertices[] = { 50, 50, 0,
-				50, 150, 0,
-				150,50, 0,
-				50, 150, 0,
-				150,50, 0,
-				150, 150, -0 };
-			objects.push_back(GLobject(objectVertices, 18));
-			GLfloat objectVertices2[] = { 50, 50, 0,
-				50, 150, 0,
-				150,50, 0, };
-			objects.push_back(GLobject(objectVertices2, 9));
-			objects.push_back(GLobject(objectVertices2, 9));
-			GLfloat objectVerticesT[] = { 200, 200, 0,
-				200, 300, 0,
-				300,200, 0,
-				200, 300, 0,
-				300, 200, 0,
-				300,300, 0,
-				300, 200, 0,
-				300, 300, 0,
-				400,300, 0,
-				400, 300, 0,
-				300, 300, 0,
-				400,400, 0 };
-			targetObjects.push_back(GLobject(objectVerticesT, 36));
-			break;
-		}
-	}
+	loadLevel(currentLevel + 1);
+	std::cout << "Done" << std::endl;
 }
+
 void World::verificationVictory()
 {
 	float vict = 0;
 	int size = 0;
 		for(GLobject target:targetObjects)
 		{
-			for (int i = target.minX; i < target.maxX; i+=4) {
-				for (int j = target.minY; j < target.maxY; j+=4) {
+			for (int i = target.minX; i < target.maxX; i+=10) {
+				for (int j = target.minY; j < target.maxY; j+=10) {
 					if (target.pointInObject(i, j)) {
 						size++;
 						bool valid = false;
@@ -162,7 +149,7 @@ void World::computeTransformation()
 		delete transVert;
 		delete points;
 		objects[currentObject].updateValues();
-		verificationVictory();
+		//verificationVictory();
 	}
 }
 void World::initTransfoMatrix(void)

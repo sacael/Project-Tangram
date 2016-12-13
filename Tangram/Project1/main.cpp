@@ -22,10 +22,11 @@
 int sizeX = 1400;
 int sizeY = 1000;
 float step = 0.1f;
-float angle = 30;
+float angle = 45;
 int leftButton = 0;
 int middleButton = 0;
 int rightButton = 0;
+int leftButtonUp = 0;
 int downX, downY;
 std::string tuto[3] = {"rotate : q,e","translate : mouse","shear : o,l"};
 int nbtuto = 3;
@@ -81,8 +82,10 @@ void mouse(int button, int state, int x, int y)
     leftButton = ((button == GLUT_LEFT_BUTTON) && (state == GLUT_DOWN));
     middleButton = ((button == GLUT_MIDDLE_BUTTON) &&  (state == GLUT_DOWN));
     rightButton = ((button == GLUT_RIGHT_BUTTON) && (state == GLUT_DOWN));
+	leftButtonUp = ((button == GLUT_LEFT_BUTTON) && (state == GLUT_UP));
 
-
+	if (leftButtonUp)
+		world.verificationVictory();
 
 	if (leftButton) {
 		bool found = false;

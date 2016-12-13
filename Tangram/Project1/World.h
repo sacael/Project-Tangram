@@ -5,7 +5,18 @@
 #include <vector>;
 #include "GLobject.h"
 #include "Button.h"
+#include "OBJReader.h"
+#include<stdio.h>
+#include<cstdlib>
+#include<string.h>
+#include <sstream>
+#include <string>
+#include <iostream>
+#include"dirent.h"
+
 #define PI 3.14159265
+#define LEVELS_PATH "../Levels/Level" //The path to the levels with their identifier
+
 class NextLevel;
 class Button;
 class World
@@ -30,9 +41,10 @@ public:
 	int currentLevel=0;
 	bool pause = false;
 	void InitLevel();
-private:
 	void verificationVictory();
+private:
 	GLfloat * multVectMat(Point4 vect, GLfloat * mat);
+	void loadLevel(int levelIndex);
 	void computeTransformation();
 	void initTransfoMatrix(void);
 	void initTempMatrix(void);

@@ -24,14 +24,17 @@
     <ClCompile Include="GLTriangle.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="NextLevel.cpp" />
+    <ClCompile Include="OBJReader.cpp" />
     <ClCompile Include="Point4.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h" />
+    <ClInclude Include="dirent.h" />
     <ClInclude Include="GLobject.h" />
     <ClInclude Include="GLTriangle.h" />
     <ClInclude Include="NextLevel.h" />
+    <ClInclude Include="OBJReader.h" />
     <ClInclude Include="Point4.h" />
     <ClInclude Include="World.h" />
   </ItemGroup>
@@ -92,6 +95,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>glut32.lib;opengl32.lib;glu32.lib;glut32.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
