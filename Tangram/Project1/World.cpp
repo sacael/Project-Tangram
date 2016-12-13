@@ -59,10 +59,12 @@ void World::InitLevel()
 	this->initializeColors();
 }
 
+//verification of the victory
 float World::verificationVictory()
 {
 	float vict = 0;
 	int size = 0;
+		//we check for each target objects if some points are also on objects
 		for(GLobject target:targetObjects)
 		{
 			for (int i = target.minX; i < target.maxX; i+=5) {
@@ -88,6 +90,7 @@ float World::verificationVictory()
 	if (vict > 0.97f) {
 		this->drawNextLevelButton();
 	}
+	//return of the % of completion
 	return vict * 100;
 }
 
@@ -107,10 +110,10 @@ void World::redrawNextLevelButton() {
 	UI.push_back(this->nextLevelButton);
 	
 }
-
+//multiply the vector by the matrix
 GLfloat* World::multVectMat(Point4 vect, GLfloat *mat)
 {
-	GLfloat * res = new GLfloat[4]; //{0.0f,0.0f,0.0f,1.0f};
+	GLfloat * res = new GLfloat[4];
 
 	for (int i = 0; i<4; i++) {
 
@@ -124,24 +127,27 @@ GLfloat* World::multVectMat(Point4 vect, GLfloat *mat)
 	return res;
 }
 
-void World::multiplyTransfoMatrice(GLfloat *mat)
+//multiply the transfomatrix
+void World::multiplyTransfoMatrix(GLfloat *mat)
 {
 	GLfloat temp[16];
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			int pos = 4 * i + j;
 			temp[pos] = 0;
-			temp[pos] += tranfoMatrice[4 * i] * mat[j];
-			temp[pos] += tranfoMatrice[4 * i + 1] * mat[4 + j];
-			temp[pos] += tranfoMatrice[4 * i + 2] * mat[8 + j];
-			temp[pos] += tranfoMatrice[4 * i + 3] * mat[12 + j];
+			temp[pos] += transfoMatrix[4 * i] * mat[j];
+			temp[pos] += transfoMatrix[4 * i + 1] * mat[4 + j];
+			temp[pos] += transfoMatrix[4 * i + 2] * mat[8 + j];
+			temp[pos] += transfoMatrix[4 * i + 3] * mat[12 + j];
 		}
 	}
 	for (int i = 0; i < 16; i++)
 	{
-		tranfoMatrice[i] = temp[i];
+		transfoMatrix[i] = temp[i];
 	}
 }
+
+//application of the transfomatrix on the current object
 void World::computeTransformation()
 {
 	bool valid = true;
@@ -152,8 +158,7 @@ void World::computeTransformation()
 		Point4** points = obj.getPoints();
 		for (int i = 0; i < obj.triangles.size() * 3; i++) {
 			transVert[i] = new GLfloat[4];
-			transVert[i] = multVectMat((*points[i]), tranfoMatrice); //apres multiplcation par la matrice de transformations
-																  //printf(" for %d :  %.2f  %.2f  %.2f   \n", i, transVert[0], transVert[1],transVert[2]);
+			transVert[i] = multVectMat((*points[i]), transfoMatrix);
 			valid = valid && transVert[i][0] > minX && transVert[i][0]<maxX && transVert[i][1]>minY&& transVert[i][1] < maxY;
 			}
 		if (valid) {
@@ -168,85 +173,91 @@ void World::computeTransformation()
 		delete transVert;
 		delete points;
 		objects[currentObject].updateValues();
-		//verificationVictory();
 	}
 }
+
 void World::initTransfoMatrix(void)
 {
 	for (int i = 0; i<16; i++)
 	{
-		tranfoMatrice[i] = 0.0f;
+		transfoMatrix[i] = 0.0f;
 	}
 
-	tranfoMatrice[0] = tranfoMatrice[5] = tranfoMatrice[10] = tranfoMatrice[15] = 1.0f;
+	transfoMatrix[0] = transfoMatrix[5] = transfoMatrix[10] = transfoMatrix[15] = 1.0f;
 }
+
 void World::initTempMatrix(void)
 {
 	for (int i = 0; i<16; i++)
 	{
-		tempMatrice[i] = 0.0f;
+		tempMatrix[i] = 0.0f;
 	}
 
-	tempMatrice[0] = tempMatrice[5] = tempMatrice[10] = tempMatrice[15] = 1.0f;
+	tempMatrix[0] = tempMatrix[5] = tempMatrix[10] = tempMatrix[15] = 1.0f;
 }
+
+//rotation around the center of the object
 void World::rotate(float angle,AXIS axis) {
 	Point4 Position = Point4();
 	if (currentObject < objects.size()) {
 
 		Position = objects[currentObject].center;
 		initTransfoMatrix();
-		tranfoMatrice[12] = -Position.X;
-		tranfoMatrice[13] = -Position.Y;
+		transfoMatrix[12] = -Position.X;
+		transfoMatrix[13] = -Position.Y;
+		transfoMatrix[14] = -Position.Z;
 		initTempMatrix();
 		float radangle = angle*PI / 180.0;
 		float cosA = cos(radangle);
 		float sinA = sin(radangle);
 		switch (axis) {
 		case(AXIS::X): {
-			tempMatrice[5] = cosA;
-			tempMatrice[6] = -sinA;
-			tempMatrice[9] = sinA;
-			tempMatrice[10] = cosA;
+			tempMatrix[5] = cosA;
+			tempMatrix[6] = -sinA;
+			tempMatrix[9] = sinA;
+			tempMatrix[10] = cosA;
 			break;
 			}
 		case(AXIS::Y): {
-			tempMatrice[0] = cosA;
-			tempMatrice[2] = -sinA;
-			tempMatrice[8] = sinA;
-			tempMatrice[10] = cosA;
+			tempMatrix[0] = cosA;
+			tempMatrix[2] = -sinA;
+			tempMatrix[8] = sinA;
+			tempMatrix[10] = cosA;
 			break;
 		}
 		case(AXIS::Z): {
-			tempMatrice[0] = cosA;
-			tempMatrice[1] = -sinA;
-			tempMatrice[4] = sinA;
-			tempMatrice[5] = cosA;
+			tempMatrix[0] = cosA;
+			tempMatrix[1] = -sinA;
+			tempMatrix[4] = sinA;
+			tempMatrix[5] = cosA;
 			break;
 		}
 		}
 
-		multiplyTransfoMatrice(tempMatrice);
+		multiplyTransfoMatrix(tempMatrix);
 		initTempMatrix();
-		tempMatrice[12] = Position.X;
-		tempMatrice[13] = Position.Y;
-		multiplyTransfoMatrice(tempMatrice);
+		tempMatrix[12] = Position.X;
+		tempMatrix[13] = Position.Y;
+		tempMatrix[14] = Position.Z;
+		multiplyTransfoMatrix(tempMatrix);
 		computeTransformation();
 	}
 }
+//projection of the object on a plane
 void World::project(AXIS axis) {
 	if (currentObject < objects.size()) {
 		initTransfoMatrix();
 		switch (axis) {
 			case(AXIS::X): {
-				tranfoMatrice[0] = 0;
+				transfoMatrix[0] = 0;
 				break;
 			}
 			case(AXIS::Y): {
-				tranfoMatrice[5] = 0;
+				transfoMatrix[5] = 0;
 				break;
 			}
 			case(AXIS::Z): {
-				tranfoMatrice[10] = 0;
+				transfoMatrix[10] = 0;
 				break;
 			}
 		}
@@ -258,26 +269,27 @@ void World::reflect(AXIS axis){
 		initTransfoMatrix();
 		switch (axis) {
 		case(AXIS::X): {
-			tranfoMatrice[0] = -1;
+			transfoMatrix[0] = -1;
 			break;
 		}
 		case(AXIS::Y): {
-			tranfoMatrice[5] = -1;
+			transfoMatrix[5] = -1;
 			break;
 		}
 		case(AXIS::Z): {
-			tranfoMatrice[10] = -1;
+			transfoMatrix[10] = -1;
 			break;
 		}
 		}
 		computeTransformation();
 	}
 }
+//translation of the object by a certain vector
 void World::translate(GLfloat x, GLfloat y,GLfloat z) {
 	initTransfoMatrix();
-	tranfoMatrice[12] = x;
-	tranfoMatrice[13] = y;
-	tranfoMatrice[14] = z;
+	transfoMatrix[12] = x;
+	transfoMatrix[13] = y;
+	transfoMatrix[14] = z;
 	computeTransformation();
 }
 void World::shearing(GLfloat x, GLfloat y, GLfloat z) {
@@ -285,19 +297,19 @@ void World::shearing(GLfloat x, GLfloat y, GLfloat z) {
 	if (currentObject < objects.size()) {
 		Position = objects[currentObject].center;
 		initTransfoMatrix();
-		tranfoMatrice[12] = -Position.X;
-		tranfoMatrice[13] = -Position.Y;
-		tranfoMatrice[14] = -Position.Z;
+		transfoMatrix[12] = -Position.X;
+		transfoMatrix[13] = -Position.Y;
+		transfoMatrix[14] = -Position.Z;
 		initTempMatrix();
-		tempMatrice[1] = x;
-		tempMatrice[4] = y;
-		tempMatrice[9] = z;
-		multiplyTransfoMatrice(tempMatrice);
+		tempMatrix[1] = x;
+		tempMatrix[4] = y;
+		tempMatrix[9] = z;
+		multiplyTransfoMatrix(tempMatrix);
 		initTempMatrix();
-		tempMatrice[12] = Position.X;
-		tempMatrice[13] = Position.Y;
-		tempMatrice[14] = Position.Z;
-		multiplyTransfoMatrice(tempMatrice);
+		tempMatrix[12] = Position.X;
+		tempMatrix[13] = Position.Y;
+		tempMatrix[14] = Position.Z;
+		multiplyTransfoMatrix(tempMatrix);
 		computeTransformation();
 	}
 }
@@ -306,25 +318,25 @@ void World::scale(GLfloat x, GLfloat y, GLfloat z) {
 	if (currentObject < objects.size()) {
 		Position = objects[currentObject].center;
 		initTransfoMatrix();
-		tranfoMatrice[12] = -Position.X;
-		tranfoMatrice[13] = -Position.Y;
-		tranfoMatrice[14] = -Position.Z;
+		transfoMatrix[12] = -Position.X;
+		transfoMatrix[13] = -Position.Y;
+		transfoMatrix[14] = -Position.Z;
 		initTempMatrix();
-		tempMatrice[0] = x;
-		tempMatrice[5] = y;
-		tempMatrice[10] = y;
-		multiplyTransfoMatrice(tempMatrice);
+		tempMatrix[0] = x;
+		tempMatrix[5] = y;
+		tempMatrix[10] = y;
+		multiplyTransfoMatrix(tempMatrix);
 		initTempMatrix();
-		tempMatrice[12] = Position.X;
-		tempMatrice[13] = Position.Y;
-		tempMatrice[14] = Position.Z;
-		multiplyTransfoMatrice(tempMatrice);
+		tempMatrix[12] = Position.X;
+		tempMatrix[13] = Position.Y;
+		tempMatrix[14] = Position.Z;
+		multiplyTransfoMatrix(tempMatrix);
 		computeTransformation();
 	}
 }
 
 
-
+//initialisation of the vector of colors
 void World::initializeColors() {
 	for (int i = 0; i < this->objects.size(); i++) {
 		std::vector<float> color = std::vector<float>();

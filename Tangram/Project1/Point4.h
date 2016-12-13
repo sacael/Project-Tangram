@@ -1,9 +1,11 @@
 #ifndef _POINT4_H
 #define _POINT4_H
+/*
+Point in 4 dimension
+*/
 class Point4
 {
 public:
-    // constructors
 	float X;
 	float Y;
 	float Z;

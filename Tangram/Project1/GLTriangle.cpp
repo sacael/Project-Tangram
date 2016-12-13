@@ -1,12 +1,12 @@
 #include "GLTriangle.h"
 #include <vector>
-
+//getter of the center
 Point4 GLTriangle::getCenter() {
 	return Point4(((*trianglePoints[0]).X + (*trianglePoints[1]).X + (*trianglePoints[2]).X) / 3
 		, ((*trianglePoints[0]).Y + (*trianglePoints[1]).Y + (*trianglePoints[2]).Y) / 3
 		, ((*trianglePoints[0]).Z + (*trianglePoints[1]).Z + (*trianglePoints[2]).Z) / 3);
 }
-
+//verification if the point is in the triangle
 bool GLTriangle::pointInTriangle(GLfloat xp, GLfloat yp)
 {
 	bool b1, b2, b3;
@@ -17,7 +17,7 @@ bool GLTriangle::pointInTriangle(GLfloat xp, GLfloat yp)
 
 	return ((b1 == b2) && (b2 == b3));
 }
-
+//constructor of the triangle with the 9 values of the coordinates
 GLTriangle::GLTriangle(GLfloat x1, GLfloat y1, GLfloat z1, GLfloat x2, GLfloat y2, GLfloat z2, GLfloat x3, GLfloat y3, GLfloat z3)
 {
 	trianglePoints[0]= new Point4(x1,y1,z1);
@@ -32,7 +32,7 @@ GLTriangle::~GLTriangle()
 	delete trianglePoints[1];
 	delete trianglePoints[2];
 }
-
+//sign of the difference of scalar product
 float GLTriangle::sign(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2, GLfloat x3, GLfloat y3)
 {
 	return (x1 - x3) * (y2 - y3) - (x2 - x3) * (y1 - y3);

@@ -1,7 +1,7 @@
 #include "GLobject.h"
 
 
-
+//getter of points of the objects by triangles
 Point4 ** GLobject::getPoints()
 {
 	Point4** returnpoints = new Point4*[triangles.size() * 3];
@@ -14,13 +14,14 @@ Point4 ** GLobject::getPoints()
 	}
 	return returnpoints;
 }
-
+//update the values of center and boundingbox
 void GLobject::updateValues()
 {
 	updateCenter();
 	updateBox();
 }
-
+//constuctor of the object with points and nbP the number of points
+//the constructor will take them 9 by 9 to make triangle
 GLobject::GLobject(GLfloat points[], int nbP)
 {
 	triangles = std::vector<GLTriangle*>();
@@ -37,7 +38,7 @@ GLobject::GLobject(GLfloat points[], int nbP)
 GLobject::~GLobject()
 {
 }
-
+//verification if a point is in the projection of the object
 bool GLobject::pointInObject(GLfloat xp, GLfloat yp)
 {
 	if (xp<minX||xp>maxX|| yp<minY || yp>maxY) {
@@ -51,6 +52,7 @@ bool GLobject::pointInObject(GLfloat xp, GLfloat yp)
 	}
 	return inobject;
 }
+//update of the value of the center
 void GLobject::updateCenter() {
 	Point4 tempPoint = Point4();
 	for (int i = 0; i<triangles.size(); i++) {
@@ -58,6 +60,7 @@ void GLobject::updateCenter() {
 	}
 	center = tempPoint / triangles.size();
 }
+//update of the bounding box of the object
 void GLobject::updateBox()
 {
 	if (triangles.size() != 0) {

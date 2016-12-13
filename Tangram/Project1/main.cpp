@@ -19,39 +19,33 @@
 #include "World.h"
 
 
-const int WIDTH = 1400;
-const int HEIGHT = 1000;
-const float ASPECT = float(WIDTH) / HEIGHT;
+const int WIDTH = 1400;//width of the canvas
+const int HEIGHT = 1000;//height of the canvas
+const float ASPECT = float(WIDTH) / HEIGHT;//ratio of the canvas
 
-int sizeX = 1400;
+int sizeX = 1400;//sizes of the starting window
 int sizeY = 1000;
-float step = 0.1f;
-float angle = 45;
-int leftButton = 0;
-int middleButton = 0;
-int rightButton = 0;
-int leftButtonUp = 0;
-int downX, downY;
+float step = 0.1f;//step for movement
+float angle = 45;//step for the rotation
+int leftButton = 0;//boolean for the left click
+int leftButtonUp = 0;//boolean for the up of the left click
+int downX, downY;//information on the last info of the nouse
+bool advanced = false;//advanced option on/off
 std::string tuto[4] 
-	= {"Rotation: Q, E", "Translation: Mouse", "Shearing: O, L","0%"};
-int nbtuto = 4;
+	= {"Rotation: Q, E", "Translation: Mouse","0%"};// texts of information
+int nbtuto = 4;//size of the text informations
 bool pressedleft = false;
 
-void mouse(int button, int state, int x, int y);
-void motion(int x, int y);
-
-void displayCursor(void);
-void draw_axis(bool drawPoints, float scale);
-
-void computeCollision();
-void initializeColors(int);
+void mouse(int button, int state, int x, int y);//function of mouse
+void motion(int x, int y);//function of movement
 void callback_idle(void);
-void renderBackground();
-void renderInstructions();
-void renderObjects();
+void renderBackground();//render of the background
+void renderInstructions();//print of the instructions
+void renderObjects();//display of the objects
 GLuint loadBMP_custom(const char * imagepath);
 
 World world;
+//initialisation of the canvas
 void init(void)
 {
 	world.InitLevel();
@@ -59,7 +53,7 @@ void init(void)
 	world.maxY = sizeY;
 	GLuint texture = loadBMP_custom("texture.bmp");
 }
-
+//display of the differents objects of the world
 void display(void)
 {
 	glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -70,7 +64,7 @@ void display(void)
 	renderInstructions();
 	glFlush();
 }
-
+//resizing og the canvas
 void reshape (int width, int height)
 {
 
@@ -88,20 +82,16 @@ void reshape (int width, int height)
 	world.redrawNextLevelButton();
 }
 
-//fonction permettant de zoomer et de tourner avec la souris
-
+//functiuns with the mouse
 void mouse(int button, int state, int x, int y)
 {
     downX = x; downY = y;
     leftButton = ((button == GLUT_LEFT_BUTTON) && (state == GLUT_DOWN));
-    middleButton = ((button == GLUT_MIDDLE_BUTTON) &&  (state == GLUT_DOWN));
-    rightButton = ((button == GLUT_RIGHT_BUTTON) && (state == GLUT_DOWN));
 	leftButtonUp = ((button == GLUT_LEFT_BUTTON) && (state == GLUT_UP));
 
 	if (leftButtonUp)
-		tuto[3]= "" + std::to_string(((int)world.verificationVictory()))+"%" ;
-		world.verificationVictory();
-	if (leftButton) {
+		tuto[2]= "" + std::to_string(((int)world.verificationVictory()))+"%" ;	//update of the % of completion
+	if (leftButton) {//on click we selected the object we click on
 		bool found = false;
 		int i = 0;
 		while (!found && i < world.UI.size())
@@ -121,7 +111,6 @@ void mouse(int button, int state, int x, int y)
 			if (found) {
 				pressedleft = true;
 				world.currentObject = i - 1;
-				world.translate(-(downX - x), -(downY - y));
 			}
 			else {
 				world.currentObject = i;
@@ -130,38 +119,20 @@ void mouse(int button, int state, int x, int y)
 	}
     glutPostRedisplay();
 }
-
+//if the mouse stays pressed on movement we move the 
 void motion(int x, int y)
 {
     if (leftButton)
 	{
-		if (world.pause == true) {
-			bool found = false;
-			int i = 0;
-			while (!found && i < world.UI.size())
-			{
-				found = found || world.UI[i]->pointInObject(x, y);
-				i++;
-			}
-			if (found) {
-				world.UI[i - 1]->actionOnClick();
-			}
-		}
-		else if (pressedleft) {
+		if (pressedleft) {
 			world.translate(-(downX - x), -(downY - y));
-		}
-		else {
-			
-			
-		}
-		
+		}	
     }
-
     downX = x;   downY = y;
     glutPostRedisplay();
 }
 
-
+//actions on keyboard press
 void keyboard(unsigned char key, int x, int y)
 {
 
@@ -170,47 +141,56 @@ void keyboard(unsigned char key, int x, int y)
         case 27:
             exit(0);
             break;
-            
-            case 'a': //left
-				world.translate(-step,0);
+            case 'a':
+				world.translate(-step,0);//little translations on a,w,s,d
 				 break;
             
-            case 'd': //right
+            case 'd': 
 				world.translate(step,0);
 				 break;
-        case 'w': //up
-			world.translate(0,step);
-            break;
-            
-        case 's': //down
-			world.translate(0, -step);
-            break;
-		case 'q':
-			world.rotate(angle,AXIS::Z);
-			break;
-		case 'e':
-			
-			world.rotate(-angle,AXIS::Z);
-			break;
+			case 's': 
+				world.translate(0,step);
+				break;
+			case 'w':
+				world.translate(0, -step);
+				break;
 
-        case 'o': 
-			world.shearing(0,1);
-            break;
+			case 'q'://rotation on q/e
+				world.rotate(angle, AXIS::Z);
+				break;
+			case 'e':
+
+				world.rotate(-angle, AXIS::Z);
+				break;
+			case 't': 
+				advanced = !advanced;//toggle advancedmode on t
+				break;
+
+
+			case 'o': 
+				if(advanced)
+				world.shearing(0,1);
+				break;
             
-        case 'l': //shearing  Hxy (-s,-t)
-			world.shearing(0,-1);
-            break;
+			case 'l':
+				if (advanced)
+				world.shearing(0,-1);
+				break;
             
         
-        case 'g': //scale along XYZ
-			world.scale(1.25,1.25);
-			break;
+			case 'g':
+				if (advanced)
+				world.scale(1.25,1.25);
+				break;
             
-        case 'h': //scale along XYZ
-			world.scale(0.8,0.8);
-            break;
+			case 'h':
+				if (advanced)
+				world.scale(0.8,0.8);
+				break;
             
     }
+   tuto[2] = "" + std::to_string(((int)world.verificationVictory())) + "%";
+
 }
 
 int main(int argc, char** argv)
@@ -235,6 +215,8 @@ int main(int argc, char** argv)
     return 0;
     
 }
+
+//renderings of tuto informations
 void renderInstructions() {
 	for (int i = 0; i < nbtuto; i++) {
 		glColor3d(.4f, .4f, .4f);
@@ -249,11 +231,7 @@ void renderInstructions() {
 
 }
 
-void generateColors(int objects)
-{
-	
-}
-
+//render the objects in triangle
 void renderObjects()
 {
     GLfloat r,g,b;
@@ -271,7 +249,6 @@ void renderObjects()
 		}
 		delete[] points;
 	}
-	//glColor3f(1.0, 1.0, 0.0);
 	int i = 0;
 	for (GLobject obj : world.objects) {
 		std::vector<float> color = world.colorArray.at(i++);
@@ -403,24 +380,20 @@ GLuint loadBMP_custom(const char * imagepath) {
 	if (*(int*)&(header[0x1E]) != 0) { printf("Not a correct BMP file\n");    return 0; }
 	if (*(int*)&(header[0x1C]) != 24) { printf("Not a correct BMP file\n");    return 0; }
 
-	// Read the information about the image
 	dataPos = *(int*)&(header[0x0A]);
 	imageSize = *(int*)&(header[0x22]);
 	width = *(int*)&(header[0x12]);
 	height = *(int*)&(header[0x16]);
 	bpp = 3;
 
-	// Some BMP files are misformatted, guess missing information
-	if (imageSize == 0)    imageSize = width*height * 3; // 3 : one byte for each Red, Green and Blue component
+	if (imageSize == 0)    imageSize = width*height * 3; 
 	if (dataPos == 0)      dataPos = 54;
 
 	// Create a buffer
 	data = new unsigned char[imageSize];
 
-	// Read the actual data from the file into the buffer
 	fread(data, 1, imageSize, file);
 
-	// Everything is in memory now, the file wan be closed
 	fclose(file);
 
 	// Swap Red and Blue component for each texel of the image
@@ -435,23 +408,15 @@ GLuint loadBMP_custom(const char * imagepath) {
 	// Create one OpenGL texture
 	GLuint textureID;
 	glGenTextures(1, &textureID);
-
-	// "Bind" the newly created texture : all future texture functions will modify this texture
 	glBindTexture(GL_TEXTURE_2D, textureID);
 
 	// Give the image to OpenGL
 	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, (bpp == 3 ? GL_RGB : GL_RGBA), GL_UNSIGNED_BYTE, data);
 
-	// Poor filtering, or ...
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	//glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST); 
-
-	// ... nice trilinear filtering.
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	// Return the ID of the texture we just created
 	return textureID;
 }

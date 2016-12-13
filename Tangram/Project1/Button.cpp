@@ -1,7 +1,7 @@
 #include "Button.h"
 
 
-
+//getter for the points of the rectangle
 Point4 ** Button::getPoints()
 {
 	Point4** returnpoints = new Point4*[6];
@@ -15,32 +15,20 @@ Point4 ** Button::getPoints()
 }
 
 
-
+//initialisation of the button
 Button::Button( int _minX, int _maxX,  int _minY, int _maxY, World* _world)
 {
 	world = _world;
-
-	int currentWidth = glutGet(GLUT_WINDOW_WIDTH);
-	int currentHeight = glutGet(GLUT_WINDOW_HEIGHT);
-
-	GLint centerX = currentWidth / 2;
-	GLint centerY = currentHeight / 2;
-	GLint halfWidth = (_maxX - _minX) / 2;
-	GLint halfHeight = (_maxY - _minY) / 2;
-
-	Point4* center = new Point4(centerX, centerY, 0);
-	Point4* halfSize = new Point4(halfWidth, halfHeight, 0);
-
-	maxX = center->X + halfSize->X;
-	maxY = center->Y + halfSize->Y;
-	minX = center->X - halfSize->X;
-	minY = center->Y - halfSize->Y;
+	minX = _minX;
+	maxX = _maxX;
+	minY = _minY;
+	maxY = _maxY;
 }
 
 Button::~Button()
 {
 }
-
+//verification if the point is in the button
 bool Button::pointInObject(GLfloat xp , GLfloat yp)
 {
 	return !(xp<minX || xp>maxX || yp<minY || yp>maxY);
