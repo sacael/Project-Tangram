@@ -58,7 +58,6 @@ void init(void)
 	world.maxX = sizeX;
 	world.maxY = sizeY;
 	GLuint texture = loadBMP_custom("texture.bmp");
-	srand(time(NULL));
 }
 
 void display(void)
@@ -217,7 +216,8 @@ void keyboard(unsigned char key, int x, int y)
 int main(int argc, char** argv)
 {
     //logitek->AfficherJoysConnectes();
-    
+
+	srand(time(NULL));
 	glutInit(&argc, argv);
     glutInitDisplayMode (GLUT_SINGLE | GLUT_RGB);
     glutInitWindowSize (sizeX, sizeY);
