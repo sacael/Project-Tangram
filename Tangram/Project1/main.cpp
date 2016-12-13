@@ -53,6 +53,7 @@ void init(void)
 	world.InitLevel();
 	world.maxX = sizeX;
 	world.maxY = sizeY;
+	GLuint texture = loadBMP_custom("texture.bmp");
 }
 
 
@@ -297,7 +298,8 @@ void renderBackground() {
 	glMatrixMode(GL_PROJECTION);
 	glPushMatrix();
 	glLoadIdentity();
-	glOrtho(0.0, glutGet(GLUT_WINDOW_WIDTH), 0.0, glutGet(GLUT_WINDOW_HEIGHT), -1.0, 1.0);
+	glOrtho(0.0, glutGet(GLUT_WINDOW_WIDTH), 0.0, glutGet(GLUT_WINDOW_HEIGHT), 
+		-1.0, 1.0);
 	glMatrixMode(GL_MODELVIEW);
 	glPushMatrix();
 
@@ -306,7 +308,6 @@ void renderBackground() {
 
 	glColor3f(1, 1, 1);
 	glEnable(GL_TEXTURE_2D);
-	GLuint texture = loadBMP_custom("texture.bmp");
 
 	GLint viewPort[4];
 
