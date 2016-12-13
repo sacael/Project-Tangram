@@ -226,12 +226,12 @@ int main(int argc, char** argv)
 }
 void renderInstructions() {
 	for (int i = 0; i < nbtuto; i++) {
-		glColor3d(0, 1.0f, 0.0f);
+		glColor3d(.4f, .4f, .4f);
 		glRasterPos2f(15, 15+i*20);
 		int len = tuto[i].length();
 
 		for (int j = 0; j < len; j++) {
-			glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, tuto[i][j]);
+			glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, tuto[i][j]);
 		}
 	}
 
