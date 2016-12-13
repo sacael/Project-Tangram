@@ -13,6 +13,7 @@
 #include <string>
 #include <iostream>
 #include"dirent.h"
+#include <time.h>
 
 #define PI 3.14159265
 #define LEVELS_PATH "../Levels/Level" //The path to the levels with their identifier
@@ -43,6 +44,7 @@ public:
 	void InitLevel();
 	void verificationVictory();
 	void redrawNextLevelButton();
+	std::vector<std::vector<float>> colorArray;
 private:
 	GLfloat * multVectMat(Point4 vect, GLfloat * mat);
 	void loadLevel(int levelIndex);
@@ -51,6 +53,7 @@ private:
 	void initTempMatrix(void);
 	void multiplyTransfoMatrice(GLfloat * mat);
 	void drawNextLevelButton();
+	void initializeColors();
 	NextLevel* nextLevelButton = nullptr;
 	GLfloat tranfoMatrice[16] = { 1.0f,0.0f,0.0f,0.0f,
 		0.0f,1.0f,0.0f,0.0f,

@@ -56,6 +56,7 @@ void World::InitLevel()
 	this->nextLevelButton = nullptr;
 	loadLevel(currentLevel + 1);
 	std::cout << "Done" << std::endl;
+	this->initializeColors();
 }
 
 void World::verificationVictory()
@@ -251,5 +252,18 @@ void World::scale(GLfloat x, GLfloat y) {
 		tempMatrice[13] = Position.Y;
 		multiplyTransfoMatrice(tempMatrice);
 		computeTransformation();
+	}
+}
+
+
+
+void World::initializeColors() {
+	for (int i = 0; i < this->objects.size(); i++) {
+		std::vector<float> color = std::vector<float>();
+		for (int j = 0; j < 3; j++) {
+			color.push_back(static_cast <float> (rand()) / static_cast <float> (RAND_MAX));
+		}
+
+		this->colorArray.push_back(color);
 	}
 }

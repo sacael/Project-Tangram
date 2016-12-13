@@ -44,6 +44,7 @@ void displayCursor(void);
 void draw_axis(bool drawPoints, float scale);
 
 void computeCollision();
+void initializeColors(int);
 void callback_idle(void);
 void renderBackground();
 void renderInstructions();
@@ -53,13 +54,12 @@ GLuint loadBMP_custom(const char * imagepath);
 World world;
 void init(void)
 {
-    
 	world.InitLevel();
 	world.maxX = sizeX;
 	world.maxY = sizeY;
 	GLuint texture = loadBMP_custom("texture.bmp");
+	srand(time(NULL));
 }
-
 
 void display(void)
 {
@@ -79,7 +79,6 @@ void reshape (int width, int height)
 	glLoadIdentity();
 
 	int w = height * ASPECT;           // w is width adjusted for aspect ratio
-	int left = (width - w) / 2;
 	glViewport(0, 0, w, height);       // fix up the viewport to maintain aspect ratio
 	gluOrtho2D(0, WIDTH, HEIGHT, 0);   // only the window is changing, not the camera
 	glMatrixMode(GL_MODELVIEW);
@@ -249,6 +248,12 @@ void renderInstructions() {
 
 
 }
+
+void generateColors(int objects)
+{
+	
+}
+
 void renderObjects()
 {
     GLfloat r,g,b;
@@ -266,8 +271,11 @@ void renderObjects()
 		}
 		delete[] points;
 	}
-	glColor3f(1.0, 1.0, 0.0);
+	//glColor3f(1.0, 1.0, 0.0);
+	int i = 0;
 	for (GLobject obj : world.objects) {
+		std::vector<float> color = world.colorArray.at(i++);
+		glColor3f(color.at(0), color.at(1), color.at(2));
 		Point4** points = obj.getPoints();
 		for (int i = 0; i<(obj.triangles.size()) *3; i++) {
 			glVertex3f((*points[i]).X, (*points[i]).Y, (*points[i]).Z);
@@ -355,7 +363,6 @@ void renderBackground() {
 
 	glDisable(GL_TEXTURE_2D);
 	glPopMatrix();
-
 
 	glMatrixMode(GL_PROJECTION);
 	glPopMatrix();
