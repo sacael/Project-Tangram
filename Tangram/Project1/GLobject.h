@@ -1,8 +1,8 @@
 #ifndef _GLOBJECT_H
 #define NOMINMAX
 #define _GLOBJECT_H
-#include <vector>;
-#include "GLTriangle.h";
+#include <vector>
+#include "GLTriangle.h"
 #include <algorithm> 
 class GLobject
 {

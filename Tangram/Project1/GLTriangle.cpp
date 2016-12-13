@@ -1,5 +1,5 @@
-#include "GLTriangle.h";
-#include <vector>;
+#include "GLTriangle.h"
+#include <vector>
 
 Point4 GLTriangle::getCenter() {
 	return Point4(((*trianglePoints[0]).X + (*trianglePoints[1]).X + (*trianglePoints[2]).X) / 3

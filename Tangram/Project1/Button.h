@@ -1,11 +1,11 @@
 #pragma once
-#include <algorithm>;
+#include <algorithm>
 class World;
-#include <vector>;
-#include <Windows.h>;
-#include <GL/gl.h>;
-#include "Point4.h";
-#include "World.h";
+#include <vector>
+#include <Windows.h>
+#include <GL/gl.h>
+#include "Point4.h"
+#include "World.h"
 
 
 class Button

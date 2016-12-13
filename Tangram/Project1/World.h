@@ -1,8 +1,8 @@
 #pragma once
-#include <windows.h>;
-#include <gl/GL.h>;
-#include "Point4.h";
-#include <vector>;
+#include <windows.h>
+#include <gl/GL.h>
+#include "Point4.h"
+#include <vector>
 #include "GLobject.h"
 #include "Button.h"
 #include "OBJReader.h"
