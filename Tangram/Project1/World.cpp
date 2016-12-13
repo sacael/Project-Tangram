@@ -59,14 +59,14 @@ void World::InitLevel()
 	this->initializeColors();
 }
 
-void World::verificationVictory()
+float World::verificationVictory()
 {
 	float vict = 0;
 	int size = 0;
 		for(GLobject target:targetObjects)
 		{
-			for (int i = target.minX; i < target.maxX; i+=10) {
-				for (int j = target.minY; j < target.maxY; j+=10) {
+			for (int i = target.minX; i < target.maxX; i+=5) {
+				for (int j = target.minY; j < target.maxY; j+=5) {
 					if (target.pointInObject(i, j)) {
 						size++;
 						bool valid = false;
@@ -88,7 +88,7 @@ void World::verificationVictory()
 	if (vict > 0.97f) {
 		this->drawNextLevelButton();
 	}
-	
+	return vict * 100;
 }
 
 void World::drawNextLevelButton() {
@@ -189,9 +189,10 @@ void World::initTempMatrix(void)
 
 	tempMatrice[0] = tempMatrice[5] = tempMatrice[10] = tempMatrice[15] = 1.0f;
 }
-void World::rotate(float angle,AXIS axe) {
+void World::rotate(float angle,AXIS axis) {
 	Point4 Position = Point4();
 	if (currentObject < objects.size()) {
+
 		Position = objects[currentObject].center;
 		initTransfoMatrix();
 		tranfoMatrice[12] = -Position.X;
@@ -200,15 +201,75 @@ void World::rotate(float angle,AXIS axe) {
 		float radangle = angle*PI / 180.0;
 		float cosA = cos(radangle);
 		float sinA = sin(radangle);
-		tempMatrice[0] = cosA;
-		tempMatrice[1] = -sinA;
-		tempMatrice[4] = sinA;
-		tempMatrice[5] = cosA;
+		switch (axis) {
+		case(AXIS::X): {
+			tempMatrice[5] = cosA;
+			tempMatrice[6] = -sinA;
+			tempMatrice[9] = sinA;
+			tempMatrice[10] = cosA;
+			break;
+			}
+		case(AXIS::Y): {
+			tempMatrice[0] = cosA;
+			tempMatrice[2] = -sinA;
+			tempMatrice[8] = sinA;
+			tempMatrice[10] = cosA;
+			break;
+		}
+		case(AXIS::Z): {
+			tempMatrice[0] = cosA;
+			tempMatrice[1] = -sinA;
+			tempMatrice[4] = sinA;
+			tempMatrice[5] = cosA;
+			break;
+		}
+		}
+
 		multiplyTransfoMatrice(tempMatrice);
 		initTempMatrix();
 		tempMatrice[12] = Position.X;
 		tempMatrice[13] = Position.Y;
 		multiplyTransfoMatrice(tempMatrice);
+		computeTransformation();
+	}
+}
+void World::project(AXIS axis) {
+	if (currentObject < objects.size()) {
+		initTransfoMatrix();
+		switch (axis) {
+			case(AXIS::X): {
+				tranfoMatrice[0] = 0;
+				break;
+			}
+			case(AXIS::Y): {
+				tranfoMatrice[5] = 0;
+				break;
+			}
+			case(AXIS::Z): {
+				tranfoMatrice[10] = 0;
+				break;
+			}
+		}
+		computeTransformation();
+	}
+}
+void World::reflect(AXIS axis){
+	if (currentObject < objects.size()) {
+		initTransfoMatrix();
+		switch (axis) {
+		case(AXIS::X): {
+			tranfoMatrice[0] = -1;
+			break;
+		}
+		case(AXIS::Y): {
+			tranfoMatrice[5] = -1;
+			break;
+		}
+		case(AXIS::Z): {
+			tranfoMatrice[10] = -1;
+			break;
+		}
+		}
 		computeTransformation();
 	}
 }
@@ -256,6 +317,7 @@ void World::scale(GLfloat x, GLfloat y, GLfloat z) {
 		initTempMatrix();
 		tempMatrice[12] = Position.X;
 		tempMatrice[13] = Position.Y;
+		tempMatrice[14] = Position.Z;
 		multiplyTransfoMatrice(tempMatrice);
 		computeTransformation();
 	}

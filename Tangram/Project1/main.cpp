@@ -32,9 +32,9 @@ int middleButton = 0;
 int rightButton = 0;
 int leftButtonUp = 0;
 int downX, downY;
-std::string tuto[3] 
-	= {"Rotation: Q, E", "Translation: Mouse", "Shearing: O, L"};
-int nbtuto = 3;
+std::string tuto[4] 
+	= {"Rotation: Q, E", "Translation: Mouse", "Shearing: O, L","0%"};
+int nbtuto = 4;
 bool pressedleft = false;
 
 void mouse(int button, int state, int x, int y);
@@ -100,8 +100,8 @@ void mouse(int button, int state, int x, int y)
 	leftButtonUp = ((button == GLUT_LEFT_BUTTON) && (state == GLUT_UP));
 
 	if (leftButtonUp)
+		tuto[3]= "" + std::to_string(((int)world.verificationVictory()))+"%" ;
 		world.verificationVictory();
-
 	if (leftButton) {
 		bool found = false;
 		int i = 0;
@@ -263,7 +263,7 @@ void renderObjects()
     b=0.0f;
     
     glBegin(GL_TRIANGLES);
-	glColor3f(1.0, 1.0, 1.0);
+	glColor3f(0.8f, 0.8f, 0.8f);
 	for (GLobject obj : world.targetObjects) {
 		Point4** points = obj.getPoints();
 		for (int i = 0; i<(obj.triangles.size()) * 3; i++) {

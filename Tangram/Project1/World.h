@@ -32,6 +32,8 @@ public:
 	int currentObject = 0;
 	GLfloat step = 0.1f;
 	void rotate(float angle,AXIS axis);
+	void project(AXIS axis);
+	void reflect(AXIS axis);
 	void translate(GLfloat x, GLfloat y, GLfloat z=0);
 	void shearing(GLfloat x, GLfloat y, GLfloat z=0);
 	void scale(GLfloat x, GLfloat y, GLfloat z=1);
@@ -43,7 +45,7 @@ public:
 	int currentLevel=0;
 	bool pause = false;
 	void InitLevel();
-	void verificationVictory();
+	float verificationVictory();
 	void redrawNextLevelButton();
 	std::vector<std::vector<float>> colorArray;
 private:
