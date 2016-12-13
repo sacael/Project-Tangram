@@ -33,7 +33,8 @@ int rightButton = 0;
 int leftButtonUp = 0;
 int downX, downY;
 std::string tuto[4] 
-	= {"Rotation: Q, E", "Translation: Mouse", "Shearing: O, L","0%"};
+	= {"Rotation: Q, E", "Translation: Mouse", "Shearing: O, L", 
+		"Completion: 0%"};
 int nbtuto = 4;
 bool pressedleft = false;
 
@@ -99,7 +100,7 @@ void mouse(int button, int state, int x, int y)
 	leftButtonUp = ((button == GLUT_LEFT_BUTTON) && (state == GLUT_UP));
 
 	if (leftButtonUp)
-		tuto[3]= "" + std::to_string(((int)world.verificationVictory()))+"%" ;
+		tuto[3]= "Completion: " + std::to_string(((int)world.verificationVictory()))+"%" ;
 		world.verificationVictory();
 	if (leftButton) {
 		bool found = false;
