@@ -87,7 +87,7 @@ float World::verificationVictory()
 
 	}
 	vict /= (size);
-	if (vict > 0.97f) {
+	if (vict > limit) {
 		this->drawNextLevelButton();
 	}
 	//return of the % of completion

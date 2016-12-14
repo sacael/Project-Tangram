@@ -33,6 +33,7 @@ public:
 	std::vector<Button*> UI = std::vector<Button*>();//list of the UI elements
 	int currentObject = 0;// position of the selected object
 	GLfloat step = 0.1f;//step of an increment 
+	float limit = 0.97; //min limit of victory
 	void rotate(float angle,AXIS axis);//rotation of the selected object around the center
 	void project(AXIS axis);//projection of the selected object onto a plane normal to the axis
 	void reflect(AXIS axis);//reflection of an object by a plane normal to the axis

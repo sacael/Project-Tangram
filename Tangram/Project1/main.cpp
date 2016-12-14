@@ -189,7 +189,7 @@ void keyboard(unsigned char key, int x, int y)
 				break;
             
     }
-   tuto[2] = "" + std::to_string(((int)world.verificationVictory())) + "%";
+   tuto[2] = "Completion: " + std::to_string(((int)world.verificationVictory())) + "%";
 
 }
 
