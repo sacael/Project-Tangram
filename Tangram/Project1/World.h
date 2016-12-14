@@ -55,15 +55,15 @@ private:
 	void computeTransformation();//compute the current transformation on the current object
 	void initTransfoMatrix(void);//initiation of the transfomatrix
 	void initTempMatrix(void);//initiation of the tempmatrix
-	void multiplyTransfoMatrice(GLfloat * mat);//multiplication of the transfomatrix by another one
+	void multiplyTransfoMatrix(GLfloat * mat);//multiplication of the transfomatrix by another one
 	void drawNextLevelButton();//first draw of the next level button
 	void initializeColors();//initialisation of the colors
 	NextLevel* nextLevelButton = nullptr;
-	GLfloat transfoMatrice[16] = { 1.0f,0.0f,0.0f,0.0f,
+	GLfloat transfoMatrix[16] = { 1.0f,0.0f,0.0f,0.0f,
 		0.0f,1.0f,0.0f,0.0f,
 		0.0f,0.0f,1.0f,0.0f,
 		0,0,0,1.0f };  //matrix of current transformation
-	GLfloat tempMatrice[16] = { 1.0f,0.0f,0.0f,0.0f,
+	GLfloat tempMatrix[16] = { 1.0f,0.0f,0.0f,0.0f,
 		0.0f,1.0f,0.0f,0.0f,
 		0.0f,0.0f,1.0f,0.0f,
 		0,0,0,1.0f };//temporary matrix for transformation

@@ -32,7 +32,7 @@ int leftButtonUp = 0;//boolean for the up of the left click
 int downX, downY;//information on the last info of the nouse
 bool advanced = false;//advanced option on/off
 std::string tuto[4] 
-	= {"Rotation: Q, E", "Translation: Mouse","0%"};// texts of information
+	= {"Rotation: Q, E", "Translation: Mouse","Completion: 0%"};// texts of information
 int nbtuto = 4;//size of the text informations
 bool pressedleft = false;
 
@@ -90,7 +90,7 @@ void mouse(int button, int state, int x, int y)
 	leftButtonUp = ((button == GLUT_LEFT_BUTTON) && (state == GLUT_UP));
 
 	if (leftButtonUp)
-		tuto[2]= "" + std::to_string(((int)world.verificationVictory()))+"%" ;	//update of the % of completion
+		tuto[2]= "Completion: " + std::to_string(((int)world.verificationVictory()))+"%" ;	//update of the % of completion
 	if (leftButton) {//on click we selected the object we click on
 		bool found = false;
 		int i = 0;
@@ -379,6 +379,7 @@ GLuint loadBMP_custom(const char * imagepath) {
 	// Make sure this is a 24bpp file
 	if (*(int*)&(header[0x1E]) != 0) { printf("Not a correct BMP file\n");    return 0; }
 	if (*(int*)&(header[0x1C]) != 24) { printf("Not a correct BMP file\n");    return 0; }
+
 
 	dataPos = *(int*)&(header[0x0A]);
 	imageSize = *(int*)&(header[0x22]);
